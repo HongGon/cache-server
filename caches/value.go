@@ -16,14 +16,14 @@ const (
 // value is a struct packs data
 type value struct {
 	// data storages real data
-	data []byte
+	Data []byte
 
 	//  ttl represents the life of this data
 	// unit: second
-	ttl int64
+	Ttl int64
 
 	// ctime represents the time when this data is created
-	ctime int64
+	Ctime int64
 }
 
 
@@ -31,9 +31,9 @@ type value struct {
 func newValue(data []byte, ttl int64) *value {
 	return &value{
 		// use copy to keep this data separated
-		data:	helpers.Copy(data),
-		ttl:	ttl,
-		ctime: 	time.Now().Unix(),
+		Data:	helpers.Copy(data),
+		Ttl:	ttl,
+		Ctime: 	time.Now().Unix(),
 	}
 }
 
@@ -42,13 +42,13 @@ func newValue(data []byte, ttl int64) *value {
 func (v *value) alive() bool {
 	// First, determine whether there is an expiration date, 
 	// and then determine whether the current time exceeds the expiration date of the data
-	return v.ttl == NeverDie || time.Now().Unix()-v.ctime < v.ttl
+	return v.Ttl == NeverDie || time.Now().Unix()-v.Ctime < v.Ttl
 }
 
 // visit returns the data
 func (v *value) visit() []byte {
-	atomic.SwapInt64(&v.ctime, time.Now().Unix())
-	return v.data
+	atomic.SwapInt64(&v.Ctime, time.Now().Unix())
+	return v.Data
 }
 
 

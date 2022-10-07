@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 
 	"cache-server/caches"
 	"cache-server/servers"
@@ -16,10 +17,18 @@ func main() {
 	flag.IntVar(&options.MaxGcCount, "maxGcCount", options.MaxGcCount, "The max count of entries that gc will clean.")
 	flag.Int64Var(&options.GcDuration, "gcDuration", options.GcDuration, "The duration between two gc tasks. The unit is Minute.")
 
+	flag.StringVar(&options.DumpFile, "dumpFile", options.DumpFile, "The file used to dump the cache.")
+    flag.Int64Var(&options.DumpDuration, "dumpDuration", options.DumpDuration, "The duration between two dump tasks. The unit is Minute.")
+
 	flag.Parse()
 
 	cache := caches.NewCacheWith(options)
 	cache.AutoGc()
+	cache.AutoDump()
+
+
+	log.Printf("Kafo is running on %s.", *address)
+
 	err := servers.NewHTTPServer(cache).Run(*address)
 	if err != nil {
 		panic(err)
